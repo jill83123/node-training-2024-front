@@ -1,0 +1,11 @@
+.swal2-popup.swal2-toast .swal2-title {
+  padding-top: 0 !important;
+}
+
+div:where(.swal2-container) .swal2-html-container {
+  margin-top: 10px !important;
+}
+
+div:where(.swal2-container) h2:where(.swal2-title) {
+  padding-top: 18px !important;
+}
