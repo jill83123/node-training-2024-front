@@ -19,7 +19,7 @@
             class="px-4 py-3"
             :class="
               sort === 'desc'
-                ? 'pointer-events-none bg-gray-300 '
+                ? 'pointer-events-none bg-secondary text-white'
                 : 'cursor-pointer hover:bg-gray-100'
             "
             @click="
@@ -36,7 +36,7 @@
             class="px-4 py-3"
             :class="
               sort === 'asc'
-                ? 'pointer-events-none bg-gray-300 '
+                ? 'pointer-events-none bg-secondary text-white'
                 : 'cursor-pointer hover:bg-gray-100'
             "
             @click="
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <div class="flex w-full items-center border-2 border-primary bg-white select-none">
+    <div class="flex w-full select-none items-center border-2 border-primary bg-white">
       <label for="search" class="hidden" />
       <input
         id="search"
