@@ -73,7 +73,7 @@
           <VField
             rules="required"
             type="text"
-            id="tags"
+            :id="`tag${index}`"
             :name="`標籤 ${index}`"
             v-model="postData.tags[index]"
             :value="tag"
@@ -90,7 +90,7 @@
         <button
           type="button"
           class="material-symbols-outlined h-8 w-8 rounded-full bg-primary p-1 text-base text-white hover:bg-goldenrod hover:text-primary"
-          @click="postData.tags.push('')">
+          @click="addTag()">
           add
         </button>
       </div>
@@ -161,7 +161,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import axios from 'axios';
 import { showToast, showCheck } from '@/utils/sweetalert';
 
@@ -205,5 +205,12 @@ async function createPost() {
     showToast({ icon: 'error', title: err.response?.data?.message ?? err.message ?? '發生錯誤' });
   }
   isLoading.value = false;
+}
+
+async function addTag() {
+  postData.value.tags.push('');
+  const lastIndex = postData.value.tags.length - 1;
+  await nextTick;
+  document.querySelector(`#tag${lastIndex}`).focus();
 }
 </script>
