@@ -101,38 +101,37 @@
       </p>
     </div>
 
-    <div class="mb-4">
-      <div class="mb-4">
-        <button
-          type="button"
-          class="rounded bg-primary px-8 py-1 text-center text-white hover:bg-goldenrod hover:text-primary">
-          上傳圖片
-        </button>
-        <span class="mx-3">或是</span>
-        <button
-          type="button"
-          class="border-b-2 border-primary hover:border-secondary hover:text-secondary"
-          @click="toggleUrlInput('open')">
-          輸入網址
-        </button>
+    <div class="mb-8">
+      <button
+        type="button"
+        class="rounded bg-primary px-8 py-1 text-center text-white hover:bg-goldenrod hover:text-primary">
+        上傳圖片
+      </button>
+      <span class="mx-3">或是</span>
+      <button
+        type="button"
+        class="border-b-2 border-primary hover:border-secondary hover:text-secondary"
+        @click="toggleUrlInput('open')">
+        輸入網址
+      </button>
 
-        <div v-show="isShowImageInput" class="mt-3 flex border-2 border-primary px-4 py-2">
-          <VField
-            name="圖片網址"
-            rules="url"
-            v-model="postData.image"
-            type="text"
-            placeholder="請輸入圖片網址"
-            class="block w-full" />
-          <button
-            type="button"
-            class="material-symbols-outlined ml-1"
-            @click="toggleUrlInput('close')">
-            close
-          </button>
-        </div>
-        <ErrorMessage name="圖片網址" class="mt-1 block text-sm text-danger" />
+      <div v-show="isShowImageInput" class="mt-3 flex border-2 border-primary px-4 py-2">
+        <VField
+          name="圖片網址"
+          rules="url"
+          v-model="postData.image"
+          type="text"
+          placeholder="請輸入圖片網址"
+          class="block w-full" />
+        <button
+          type="button"
+          class="material-symbols-outlined ml-1"
+          @click="toggleUrlInput('close')">
+          close
+        </button>
       </div>
+      <ErrorMessage name="圖片網址" class="mt-1 block text-sm text-danger" />
+
       <div v-show="postData.image && !errors.errors['圖片網址']" class="relative">
         <img :src="postData.image" alt="post-image" class="mb-8 object-contain" />
         <button
@@ -147,7 +146,7 @@
 
     <button
       type="submit"
-      class="mx-auto block rounded-lg border-2 border-primary bg-goldenrod px-[130px] py-4 disabled:bg-[#A8B0B9] disabled:text-primary"
+      class="mx-auto block w-full rounded-lg border-2 border-primary bg-goldenrod py-4 disabled:bg-[#A8B0B9] disabled:text-primary sm:w-auto sm:px-[130px]"
       style="box-shadow: -2px 2px 0px #000400"
       :disabled="
         Object.keys(errors.errors).length !== 0

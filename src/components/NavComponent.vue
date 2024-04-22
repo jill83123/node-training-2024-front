@@ -8,7 +8,7 @@
         <img
           src="/images/user_default.png"
           alt="user-photo"
-          class="mr-[10px] h-[30px] w-[30px] rounded-full" />
+          class="mr-[10px] h-[30px] w-[30px] rounded-full border-2 border-primary" />
         <p class="border-b-2 border-primary font-Azeret-Mono font-bold">Member</p>
       </div>
     </div>

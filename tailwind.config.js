@@ -7,7 +7,15 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: '.75rem',
+      padding: '.875rem',
+    },
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1440px',
+      '3xl': '1536px',
     },
     extend: {
       fontFamily: {
@@ -23,5 +31,24 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    ({ addComponents }) => {
+      addComponents({
+        '.container': {
+          '@screen lg': {
+            maxWidth: '896px',
+          },
+          '@screen xl': {
+            maxWidth: '896px',
+          },
+          '@screen 2xl': {
+            maxWidth: '896px',
+          },
+          '@screen 3xl': {
+            maxWidth: '1194px',
+          },
+        },
+      });
+    },
+  ],
 };

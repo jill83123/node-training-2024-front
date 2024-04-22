@@ -5,11 +5,11 @@
     class="min-h-[calc(100vh_-_66px)]"
     :style="{ 'background-image': `url(${BASE_URL}images/bg.svg)` }">
     <div class="container flex justify-between gap-7 py-12">
-      <main class="w-8/12">
+      <main class="w-full lg:w-[62%]">
         <RouterView />
       </main>
 
-      <aside class="w-4/12">
+      <aside class="hidden w-[36%] lg:block">
         <div class="border-2 border-primary bg-white px-6 py-8">
           <RouterLink
             to="create-post"
@@ -47,6 +47,30 @@
           </button>
         </div>
       </aside>
+
+      <nav class="fixed bottom-3 left-0 right-0 mx-2 lg:hidden">
+        <div
+          class="container flex justify-center gap-6 rounded-[32px] border-[3px] border-primary bg-[#EFECE7] py-[6px]">
+          <RouterLink
+            to="/"
+            class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-white">
+            <span class="material-symbols-outlined font-medium text-primary">home</span>
+          </RouterLink>
+          <div
+            class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-white">
+            <span class="material-symbols-outlined font-medium text-primary">notifications</span>
+          </div>
+          <div
+            class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-white">
+            <span class="material-symbols-outlined font-medium text-primary">thumb_up</span>
+          </div>
+          <RouterLink
+            to="create-post"
+            class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-secondary">
+            <span class="material-symbols-outlined font-medium text-white">add</span>
+          </RouterLink>
+        </div>
+      </nav>
     </div>
   </div>
 </template>

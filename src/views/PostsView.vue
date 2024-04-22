@@ -1,11 +1,11 @@
 <template>
   <VueLoading v-model:active="isLoading" />
 
-  <div class="mb-4 flex gap-3">
+  <div class="mb-4 flex flex-col gap-3 lg:flex-row">
     <div id="sortMenu" class="border-2 border-primary bg-white">
       <div class="relative">
         <div
-          class="flex w-[156px] cursor-pointer items-center justify-between px-4 py-3"
+          class="flex cursor-pointer items-center justify-between px-4 py-3 lg:w-[156px]"
           @click="toggleSortMenu()"
           @keyup.enter="toggleSortMenu()">
           <p>{{ sort === 'asc' ? '由舊至新' : '最新貼文' }}</p>
@@ -64,7 +64,7 @@
         @keyup.enter="getPosts()" />
       <button
         type="button"
-        class="flex aspect-square h-full items-center justify-center border-l-2 border-primary bg-secondary p-3 text-xl text-white"
+        class="flex aspect-square items-center justify-center border-l-2 border-primary bg-secondary p-[13px] text-xl text-white"
         @click="getPosts()">
         <span class="material-symbols-outlined h-5 w-5">search</span>
       </button>
@@ -120,9 +120,12 @@
       class="rounded-lg border-2 border-primary bg-white"
       style="box-shadow: 0px 3px 0px #000400">
       <div class="flex items-center gap-[6px] border-b-2 border-primary p-4">
-        <div class="h-[10px] w-[10px] rounded-full border border-[#707070] bg-[#DE4B63]" />
-        <div class="h-[10px] w-[10px] rounded-full border border-[#707070] bg-[#FAA722]" />
-        <div class="h-[10px] w-[10px] rounded-full border border-[#707070] bg-[#83C51D]" />
+        <div
+          class="h-[10px] w-[10px] select-none rounded-full border border-[#707070] bg-[#DE4B63]" />
+        <div
+          class="h-[10px] w-[10px] select-none rounded-full border border-[#707070] bg-[#FAA722]" />
+        <div
+          class="h-[10px] w-[10px] select-none rounded-full border border-[#707070] bg-[#83C51D]" />
       </div>
       <p class="py-8 text-center text-[#9B9893]">目前尚無動態，新增一則貼文吧！</p>
     </div>
