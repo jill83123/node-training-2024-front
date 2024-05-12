@@ -157,8 +157,7 @@ async function getPosts() {
     );
     posts.value = res.data.posts;
   } catch (err) {
-    keywords.value = '';
-    showToast({ icon: 'error', title: err.response?.data?.message ?? err.message ?? '發生錯誤' });
+    showToast({ icon: 'error', title: err.response?.data?.message || err.message });
   }
   isLoading.value = false;
 }

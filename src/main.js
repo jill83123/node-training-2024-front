@@ -7,7 +7,10 @@ import { createPinia } from 'pinia';
 import {
   Field, Form, ErrorMessage, defineRule, configure,
 } from 'vee-validate';
-import { required, email, url } from '@vee-validate/rules';
+import {
+  required, email, url, min,
+} from '@vee-validate/rules';
+import { isPassword, isSame } from '@/utils/formValidate';
 import { localize, setLocale } from '@vee-validate/i18n';
 import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json';
 
@@ -27,6 +30,9 @@ app.use(router);
 defineRule('required', required);
 defineRule('email', email);
 defineRule('url', url);
+defineRule('min', min);
+defineRule('password', isPassword);
+defineRule('same', isSame);
 configure({
   generateMessage: localize({ zh_TW: zhTW }),
   validateOnInput: true,

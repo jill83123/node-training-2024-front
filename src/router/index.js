@@ -17,6 +17,20 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/sign',
+      component: () => import('../views/SignView.vue'),
+      children: [
+        {
+          path: 'up',
+          component: () => import('../views/SignUp.vue'),
+        },
+        {
+          path: 'in',
+          component: () => import('../views/SignIn.vue'),
+        },
+      ],
+    },
   ],
 });
 

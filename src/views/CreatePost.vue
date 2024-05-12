@@ -201,7 +201,7 @@ async function createPost() {
     form.value.resetForm();
     showToast({ icon: 'success', title: '新增貼文成功' });
   } catch (err) {
-    showToast({ icon: 'error', title: err.response?.data?.message ?? err.message ?? '發生錯誤' });
+    showToast({ icon: 'error', title: err.response?.data?.message || err.message });
   }
   isLoading.value = false;
 }
