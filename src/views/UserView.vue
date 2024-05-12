@@ -2,7 +2,7 @@
   <NavComponent />
 
   <div
-    class="min-h-[calc(100vh_-_66px)]"
+    class="min-h-[calc(100vh_-_66px)] bg-[length:36px_36px] sm:bg-[length:64px_64px]"
     :style="{ 'background-image': `url(${BASE_URL}images/bg.svg)` }">
     <div class="container flex justify-between gap-7 py-12">
       <main class="w-full lg:w-[62%]">
