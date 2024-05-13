@@ -9,7 +9,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: () => import('../views/PostsView.vue'),
+          component: () => import('../views/PostWall.vue'),
         },
         {
           path: 'create-post',

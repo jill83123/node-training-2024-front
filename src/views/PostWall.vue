@@ -135,7 +135,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { showToast } from '@/utils/sweetalert';
+import { showToast } from '@/utils/sweetAlert';
 
 const isLoading = ref(false);
 

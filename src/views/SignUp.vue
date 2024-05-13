@@ -86,7 +86,7 @@
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { showToast } from '@/utils/sweetalert';
+import { showToast } from '@/utils/sweetAlert';
 
 const router = useRouter();
 const isLoading = ref(false);

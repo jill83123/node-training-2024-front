@@ -162,7 +162,7 @@
 <script setup>
 import { ref, nextTick } from 'vue';
 import axios from 'axios';
-import { showToast, showCheck } from '@/utils/sweetalert';
+import { showToast, showCheck } from '@/utils/sweetAlert';
 
 const isLoading = ref(false);
 
