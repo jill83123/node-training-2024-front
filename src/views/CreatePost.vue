@@ -78,7 +78,7 @@
             v-model="postData.tags[index]"
             :value="tag"
             placeholder="標籤內容"
-            class="w-[100px] py-1 pl-1 pr-3" />
+            class="w-[100px] py-1 pl-1 pr-8" />
           <button
             type="button"
             class="material-symbols-outlined absolute right-1 ml-1"
@@ -115,7 +115,7 @@
         輸入網址
       </button>
 
-      <div v-show="isShowImageInput" class="mt-3 flex border-2 border-primary px-4 py-2">
+      <div v-show="isShowImageInput" class="my-3 flex border-2 border-primary px-4 py-2">
         <VField
           name="圖片網址"
           rules="url"
@@ -161,13 +161,13 @@
 
 <script setup>
 import { ref, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { showToast, showCheck } from '@/utils/sweetAlert';
 
-const isLoading = ref(false);
+const router = useRouter();
 
 const postData = ref({
-  user: '6608ed1d2846fccc562fcde1',
   content: '',
   type: '',
   tags: [],
@@ -193,6 +193,8 @@ function toggleUrlInput(option) {
   }
 }
 
+const isLoading = ref(false);
+
 const form = ref(null);
 async function createPost() {
   isLoading.value = true;
@@ -200,6 +202,7 @@ async function createPost() {
     await axios.post(`${import.meta.env.VITE_API_URL}/post `, postData.value);
     form.value.resetForm();
     showToast({ icon: 'success', title: '新增貼文成功' });
+    router.push('/');
   } catch (err) {
     showToast({ icon: 'error', title: err.response?.data?.message || err.message });
   }

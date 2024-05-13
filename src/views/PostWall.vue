@@ -9,12 +9,16 @@
           @click="toggleSortMenu()"
           @keyup.enter="toggleSortMenu()">
           <p>{{ sort === 'asc' ? '由舊至新' : '最新貼文' }}</p>
-          <span class="material-symbols-outlined select-none">expand_more</span>
+          <span
+            class="material-symbols-outlined select-none transition-all duration-300"
+            :class="isOpenedSortMenu ? 'rotate-180' : ''">
+            expand_more
+          </span>
         </div>
 
         <ul
-          :class="{ hidden: !isOpenedSortMenu }"
-          class="absolute left-0 right-0 top-14 bg-white outline outline-2 outline-primary">
+          :class="{ 'pointer-events-none opacity-0 ': !isOpenedSortMenu }"
+          class="absolute left-0 right-0 top-14 bg-white outline outline-2 outline-primary transition-all">
           <li
             class="px-4 py-3"
             :class="
@@ -73,45 +77,80 @@
 
   <template v-if="posts.length > 0">
     <div
-      class="mb-4 rounded-lg border-2 border-primary bg-white p-6"
+      class="mb-4 rounded-lg border-2 border-primary bg-white p-6 pb-4"
       style="box-shadow: 0px 3px 0px #000400"
       v-for="post in posts"
       :key="post._id">
-      <div class="flex gap-4">
-        <img
-          :src="post.user && post.user.photo !== '' ? post.user.photo : '/images/user_default.png'"
-          alt="user-photo"
-          class="h-[45px] w-[45px] rounded-full border-2 border-primary" />
+      <div class="mb-3">
+        <div class="mb-4 flex gap-4">
+          <img
+            :src="
+              post.user && post.user.photo !== '' ? post.user.photo : '/images/user_default.png'
+            "
+            alt="大頭貼"
+            class="h-[45px] w-[45px] rounded-full border-2 border-primary" />
 
-        <div class="flex flex-col justify-center">
-          <p class="font-bold hover:text-secondary hover:underline hover:decoration-secondary">
-            {{ post.user?.name }}
-          </p>
+          <div class="flex flex-col justify-center">
+            <button
+              type="button"
+              class="self-start font-bold hover:text-secondary hover:underline hover:decoration-secondary hover:underline-offset-2">
+              {{ post.user?.name }}
+            </button>
 
-          <div class="flex items-center">
-            <time class="text-[12px] text-[#9B9893]">{{ formatDate(post.createdAt) }}</time>
-            <span class="material-symbols-outlined ml-2 text-lg text-[#707070]">
-              {{ post.type === 'friend' ? 'group' : 'public' }}
-            </span>
+            <div class="flex items-center">
+              <time class="text-[12px] text-[#9B9893]">{{ formatDate(post.createdAt) }}</time>
+              <span class="material-symbols-outlined ml-2 text-lg leading-none text-[#707070]">
+                {{ post.type === 'friend' ? 'group' : 'public' }}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="my-4">
-        <p class="mb-1">{{ post.content }}</p>
-        <div class="flex flex-wrap items-center gap-1 text-secondary">
-          <p v-for="(tag, index) in post.tags" :key="`${tag}${index}`" class="flex items-center">
-            <span class="material-symbols-outlined select-none text-lg">tag</span>
-            {{ tag }}
-          </p>
+        <div>
+          <p class="mb-1">{{ post.content }}</p>
+          <template v-if="post.tags.length">
+            <div class="flex flex-wrap items-center gap-1 text-sm text-secondary">
+              <ul>
+                <li
+                  v-for="(tag, index) in post.tags"
+                  :key="`${tag}${index}`"
+                  class="flex items-center">
+                  <span class="material-symbols-outlined select-none text-lg">tag</span>
+                  {{ tag }}
+                </li>
+              </ul>
+            </div>
+          </template>
         </div>
+
+        <img
+          v-if="post.image"
+          :src="post.image"
+          alt="貼文圖片"
+          class="mt-4 max-w-full rounded-lg border-2 border-primary object-contain" />
       </div>
 
-      <img
-        v-if="post.image"
-        :src="post.image"
-        alt="post-image"
-        class="max-w-full rounded-lg border-2 border-primary object-contain" />
+      <button
+        type="button"
+        @click="
+          async () => {
+            await userStore.handleLikePost(post.isLiked, post._id);
+            getPosts();
+          }
+        "
+        class="-ml-2 flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-gray-100"
+        :class="post.likes ? 'text-secondary' : 'text-[#9B9893] hover:text-secondary'">
+        <span
+          class="material-symbols-outlined text-xl"
+          :style="
+            post.isLiked
+              ? 'font-variation-settings: \'FILL\' 1, \'wght\' 400, \'GRAD\' 0, \'opsz\' 24;'
+              : ''
+          ">
+          thumb_up
+        </span>
+        <span>{{ post.likes ? post.likes : '成為第一個按讚的朋友' }}</span>
+      </button>
     </div>
   </template>
 
@@ -134,11 +173,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import createUserStore from '@/stores/userStore';
 import axios from 'axios';
 import { showToast } from '@/utils/sweetAlert';
 import { formatDate } from '@/utils/format';
 
-const isLoading = ref(false);
+const userStore = createUserStore();
 
 const sort = ref('desc');
 const keywords = ref('');
@@ -148,6 +188,8 @@ function toggleSortMenu(option) {
   sort.value = option ?? sort.value;
   isOpenedSortMenu.value = !isOpenedSortMenu.value;
 }
+
+const isLoading = ref(false);
 
 const posts = ref([]);
 async function getPosts() {
