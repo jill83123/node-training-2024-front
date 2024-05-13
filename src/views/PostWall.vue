@@ -136,6 +136,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { showToast } from '@/utils/sweetAlert';
+import { formatDate } from '@/utils/format';
 
 const isLoading = ref(false);
 
@@ -160,16 +161,6 @@ async function getPosts() {
     showToast({ icon: 'error', title: err.response?.data?.message || err.message });
   }
   isLoading.value = false;
-}
-
-function formatDate(timestamp) {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  return `${year}/${month < 10 ? `0${month}` : month}/${day < 10 ? `0${day}` : day} ${hours}:${minutes}`;
 }
 
 onMounted(() => {
