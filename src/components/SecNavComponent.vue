@@ -4,7 +4,7 @@
     <nav class="border-2 border-primary bg-white px-6 py-8">
       <RouterLink
         to="create-post"
-        class="w-100 mb-6 flex items-center justify-center rounded-lg border-2 border-primary bg-secondary py-4 text-white hover:bg-goldenrod hover:text-primary"
+        class="w-100 mb-6 flex items-center justify-center rounded-lg border-2 border-primary bg-secondary py-4 font-bold text-white hover:bg-goldenrod hover:text-primary"
         style="box-shadow: -2px 2px 0px #000400">
         張貼動態
       </RouterLink>

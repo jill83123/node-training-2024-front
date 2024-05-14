@@ -3,7 +3,11 @@
 
   <h2 class="mb-9 text-center text-2xl font-bold leading-tight text-primary">註冊</h2>
 
-  <VForm ref="form" v-slot="errors" @submit="registerAccount">
+  <VForm
+    ref="form"
+    v-slot="errors"
+    @submit="registerAccount"
+    style="font-family: 'Azeret Mono', 'Noto Sans TC', sans">
     <div class="mb-4">
       <div class="flex border-2 border-primary bg-white px-4 py-3">
         <VField

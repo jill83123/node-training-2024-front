@@ -5,7 +5,11 @@
     到元宇宙展開全新社交圈
   </h2>
 
-  <VForm ref="form" v-slot="errors" @submit="login">
+  <VForm
+    ref="form"
+    v-slot="errors"
+    @submit="login"
+    style="font-family: 'Azeret Mono', 'Noto Sans TC', sans">
     <div class="mb-4">
       <div class="flex border-2 border-primary bg-white px-4 py-3">
         <VField
