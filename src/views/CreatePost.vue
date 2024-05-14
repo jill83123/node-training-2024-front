@@ -14,7 +14,7 @@
     ref="form"
     v-slot="errors"
     @submit="createPost"
-    class="border-2 border-primary bg-white p-8">
+    class="border-2 border-primary bg-white p-5 md:p-8">
     <div class="mb-4">
       <label for="content" class="mb-1 block">
         貼文內容
@@ -102,21 +102,47 @@
     </div>
 
     <div class="mb-8">
-      <button
-        type="button"
-        class="rounded bg-primary px-8 py-1 text-center text-white hover:bg-goldenrod hover:text-primary">
-        上傳圖片
-      </button>
-      <span class="mx-3">或是</span>
-      <button
-        type="button"
-        class="border-b-2 border-primary hover:border-secondary hover:text-secondary"
-        @click="toggleUrlInput('open')">
-        輸入網址
-      </button>
+      <div class="flex items-center">
+        <label
+          @keyup.enter="uploadImage"
+          tabindex="0"
+          class="flex w-full max-w-32 cursor-pointer items-center justify-center rounded bg-primary py-1 text-center text-white hover:bg-goldenrod hover:text-primary">
+          <svg
+            v-if="isUploading"
+            class="mr-2 h-4 w-4 animate-spin text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4" />
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+          上傳圖片
+          <input type="file" ref="imageFileInput" @change="uploadImage" class="hidden" />
+        </label>
 
-      <div v-show="isShowImageInput" class="my-3 flex border-2 border-primary px-4 py-2">
+        <span class="mx-3">或是</span>
+
+        <button
+          type="button"
+          class="border-b-2 border-primary hover:border-secondary hover:text-secondary disabled:border-gray-400 disabled:text-gray-400"
+          @click="handleUrlInput('open')"
+          :disabled="postData.image.length > 0 || isShowImageInput">
+          輸入網址
+        </button>
+      </div>
+
+      <div v-show="isShowImageInput" class="mt-3 flex border-2 border-primary px-4 py-2">
         <VField
+          id="imageUrlInput"
           name="圖片網址"
           rules="url"
           v-model="postData.image"
@@ -125,45 +151,52 @@
           class="block w-full" />
         <button
           type="button"
-          class="material-symbols-outlined ml-1"
-          @click="toggleUrlInput('close')">
+          class="material-symbols-outlined ml-1 disabled:text-gray-300"
+          @click="handleUrlInput('clear')"
+          :disabled="!postData.image">
           close
         </button>
       </div>
       <ErrorMessage name="圖片網址" class="mt-1 block text-sm text-danger" />
+      <p v-if="!errors.errors['圖片網址'] && !isValidImage" class="mt-1 block text-sm text-danger">
+        無效的網址，請確認網址是否正確
+      </p>
 
       <div v-show="postData.image && !errors.errors['圖片網址']" class="relative">
-        <img :src="postData.image" alt="post-image" class="mb-8 object-contain" />
+        <img
+          v-show="isValidImage"
+          :src="postData.image"
+          alt="貼文圖片"
+          class="mx-auto mt-2 h-auto rounded-lg border-2 border-primary object-contain" />
         <button
           v-show="!isShowImageInput"
           type="button"
           class="material-symbols-outlined absolute right-0 top-0 p-4"
-          @click="toggleUrlInput('close')">
+          @click="deleteImage">
           close
         </button>
       </div>
+
+      <p class="mt-2 block text-sm text-danger">{{ imageUploadError }}</p>
     </div>
 
     <button
       type="submit"
       class="mx-auto block w-full rounded-lg border-2 border-primary bg-goldenrod py-4 disabled:bg-[#A8B0B9] disabled:text-primary sm:w-auto sm:px-[130px]"
       style="box-shadow: -2px 2px 0px #000400"
-      :disabled="
-        Object.keys(errors.errors).length !== 0
-          || postData.content === ''
-          || postData.type === ''
-          || postData.tags.find((tag) => tag === '')
-      ">
+      :disabled="Object.keys(errors.errors).length !== 0 || !isInputsValidated">
       送出貼文
     </button>
   </VForm>
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { debounce } from 'lodash';
 import { showToast, showCheck } from '@/utils/sweetAlert';
+import { checkUrlValid } from '@/utils/formValidate';
 
 const router = useRouter();
 
@@ -175,38 +208,67 @@ const postData = ref({
 });
 
 const isShowImageInput = ref(false);
-function toggleUrlInput(option) {
-  if (option === 'open') {
+async function handleUrlInput(option) {
+  if (option === 'open' && !isShowImageInput.value) {
     isShowImageInput.value = true;
-  } else if (postData.value.image === '') {
-    isShowImageInput.value = false;
-  } else {
+    await nextTick;
+    document.querySelector('#imageUrlInput').focus();
+  } else if (option === 'clear' && postData.value.image.trim()) {
     showCheck({
       icon: 'warning',
-      title: '確定要刪除圖片嗎',
-      text: '此操作將無法復原',
+      title: '確定要清除網址嗎',
+      text: '注意：此操作將無法復原',
       onConfirm() {
         postData.value.image = '';
-        isShowImageInput.value = false;
       },
     });
   }
 }
 
+function deleteImage() {
+  showCheck({
+    icon: 'warning',
+    title: '確定要刪除圖片嗎',
+    text: '注意：此操作將無法復原',
+    onConfirm() {
+      postData.value.image = '';
+    },
+  });
+}
+
+const isValidImage = ref(true);
+const debouncedCheckImage = debounce(async (url) => {
+  isValidImage.value = await checkUrlValid(url);
+}, 500);
+watch(
+  () => postData.value.image,
+  async (newUrl) => {
+    await debouncedCheckImage(newUrl);
+  },
+);
+
+const API_URL = import.meta.env.VITE_API_URL;
 const isLoading = ref(false);
 
-const form = ref(null);
-async function createPost() {
-  isLoading.value = true;
+const isUploading = ref(false);
+const imageFileInput = ref(null);
+const imageUploadError = ref('');
+async function uploadImage() {
+  isUploading.value = true;
+  imageUploadError.value = '';
   try {
-    await axios.post(`${import.meta.env.VITE_API_URL}/post `, postData.value);
-    form.value.resetForm();
-    showToast({ icon: 'success', title: '新增貼文成功' });
-    router.push('/');
+    const imageFile = imageFileInput.value.files[0];
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const res = await axios.post(`${API_URL}/upload/image?type=post `, formData);
+
+    postData.value.image = res.data.imageUrl;
+    isShowImageInput.value = false;
   } catch (err) {
-    showToast({ icon: 'error', title: err.response?.data?.message || err.message });
+    imageUploadError.value = err.response?.data?.message || err.message;
   }
-  isLoading.value = false;
+  isUploading.value = false;
 }
 
 async function addTag() {
@@ -214,5 +276,39 @@ async function addTag() {
   const lastIndex = postData.value.tags.length - 1;
   await nextTick;
   document.querySelector(`#tag${lastIndex}`).focus();
+}
+
+const isInputsValidated = ref(false);
+const debouncedCheckInputs = debounce(async () => {
+  if (
+    postData.value.content !== ''
+    && postData.value.type !== ''
+    && (!postData.value.tags.length || postData.value.tags.find((tag) => tag !== ''))
+    && isValidImage.value
+  ) {
+    isInputsValidated.value = true;
+  }
+}, 1000);
+watch(
+  postData,
+  () => {
+    isInputsValidated.value = false;
+    debouncedCheckInputs();
+  },
+  { deep: true },
+);
+
+const form = ref(null);
+async function createPost() {
+  isLoading.value = true;
+  try {
+    await axios.post(`${API_URL}/post `, postData.value);
+    form.value.resetForm();
+    showToast({ icon: 'success', title: '新增貼文成功' });
+    router.push('/');
+  } catch (err) {
+    showToast({ icon: 'error', title: err.response?.data?.message || err.message });
+  }
+  isLoading.value = false;
 }
 </script>
