@@ -8,6 +8,15 @@ const API_URL = import.meta.env.VITE_API_URL;
 const userStore = defineStore('user', () => {
   const user = ref({});
 
+  async function getUserProfile() {
+    try {
+      const res = await axios.get(`${API_URL}/user/profile`);
+      user.value = res.data.user;
+    } catch (err) {
+      showToast({ icon: 'error', title: err.response?.data?.message || err.message });
+    }
+  }
+
   async function handleLikePost(isLiked, postId) {
     try {
       let http = '';
@@ -29,6 +38,7 @@ const userStore = defineStore('user', () => {
 
   return {
     user,
+    getUserProfile,
     handleLikePost,
   };
 });

@@ -19,13 +19,16 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import createUserStore from '@/stores/userStore';
 import NavComponent from '@/components/NavComponent.vue';
 import SecNavComponent from '@/components/SecNavComponent.vue';
 
-const BASE_URL = ref(import.meta.env.BASE_URL);
 const router = useRouter();
-const isLoading = ref(false);
+const userStore = createUserStore();
 
+const BASE_URL = ref(import.meta.env.BASE_URL);
+
+const isLoading = ref(false);
 const isChecked = ref(false);
 onMounted(async () => {
   const token = document.cookie.replace(
@@ -42,6 +45,7 @@ onMounted(async () => {
   isLoading.value = true;
   try {
     await axios.post(`${import.meta.env.VITE_API_URL}/user/check`);
+    await userStore.getUserProfile();
     isChecked.value = true;
   } catch (err) {
     router.push('/sign/in');
