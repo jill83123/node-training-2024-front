@@ -17,7 +17,9 @@ const userStore = defineStore('user', () => {
     }
   }
 
+  const likingId = ref('');
   async function handleLikePost(isLiked, postId) {
+    likingId.value = postId;
     try {
       let http = '';
       let url = `${API_URL}/post/${postId}`;
@@ -34,10 +36,12 @@ const userStore = defineStore('user', () => {
     } catch (err) {
       showToast({ icon: 'error', title: err.response?.data?.message || err.message });
     }
+    likingId.value = '';
   }
 
   return {
     user,
+    likingId,
     getUserProfile,
     handleLikePost,
   };
