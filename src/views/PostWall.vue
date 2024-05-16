@@ -397,7 +397,10 @@ const isShowCommentList = ref({});
 async function toggleCommentList(postId, postIndex) {
   isShowCommentList.value[postId] = !isShowCommentList.value[postId];
   await nextTick;
-  document.querySelector(`#commentInput-${postIndex}`).focus();
+  const commentInput = document.querySelector(`#commentInput-${postIndex}`);
+  if (commentInput) {
+    commentInput.focus();
+  }
 }
 
 const tempComment = ref({});
