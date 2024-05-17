@@ -3,7 +3,7 @@
   <aside class="hidden w-[36%] lg:block">
     <nav class="border-2 border-primary bg-white px-6 py-8">
       <RouterLink
-        to="create-post"
+        to="/post/create"
         class="w-100 mb-6 flex items-center justify-center rounded-lg border-2 border-primary bg-secondary py-4 font-bold text-white hover:bg-goldenrod hover:text-primary"
         style="box-shadow: -2px 2px 0px #000400">
         張貼動態
@@ -55,7 +55,7 @@
         <span class="material-symbols-outlined font-medium text-primary">thumb_up</span>
       </div>
       <RouterLink
-        to="create-post"
+        to="/post/create"
         class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-secondary">
         <span class="material-symbols-outlined font-medium text-white">add</span>
       </RouterLink>

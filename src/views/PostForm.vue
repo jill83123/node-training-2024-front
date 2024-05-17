@@ -4,7 +4,7 @@
   <div class="relative mb-3 h-[64px]">
     <h2
       class="absolute bottom-0 left-0 right-0 top-0 z-10 border-2 border-primary bg-white py-[18px] text-center text-xl font-bold">
-      張貼動態
+      {{ route.fullPath === '/post/create' ? '張貼動態' : '編輯貼文' }}
     </h2>
     <div
       class="absolute bottom-[-4px] left-[-4px] right-1 top-1 z-0 border-2 border-primary bg-white py-[18px] text-center text-xl font-bold" />
@@ -13,7 +13,7 @@
   <VForm
     ref="form"
     v-slot="errors"
-    @submit="createPost"
+    @submit="submitPost"
     class="border-2 border-primary bg-white p-5 md:p-8">
     <div class="mb-4">
       <label for="content" class="mb-1 block">
@@ -191,14 +191,20 @@
 </template>
 
 <script setup>
-import { ref, nextTick, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import {
+  ref, nextTick, watch, onMounted,
+} from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import createPostStore from '@/stores/postStore';
 import axios from 'axios';
 import { debounce } from 'lodash';
-import { showToast, showCheck } from '@/utils/sweetAlert';
+import { showCheck } from '@/utils/sweetAlert';
 import { checkUrlValid } from '@/utils/formValidate';
 
+const route = useRoute();
 const router = useRouter();
+
+const postStore = createPostStore();
 
 const postData = ref({
   content: '',
@@ -298,17 +304,39 @@ watch(
   { deep: true },
 );
 
+let isNewPost = null;
+
 const form = ref(null);
-async function createPost() {
+async function submitPost() {
+  const { postId } = route.params;
+
   isLoading.value = true;
-  try {
-    await axios.post(`${API_URL}/post `, postData.value);
-    form.value.resetForm();
-    showToast({ icon: 'success', title: '新增貼文成功' });
-    router.push('/');
-  } catch (err) {
-    showToast({ icon: 'error', title: err.response?.data?.message || err.message });
-  }
+  await postStore.submitPost({
+    form,
+    postId,
+    postData,
+    isNewPost,
+  });
   isLoading.value = false;
 }
+
+function handlePostInitData() {
+  if (route.fullPath === '/post/create') {
+    isNewPost = true;
+    form.value.resetForm();
+  } else if (!postStore.editingPostData.content) {
+    router.push('/');
+  } else if (route.fullPath.match('/post/edit/')) {
+    isNewPost = false;
+    postData.value = { ...postStore.editingPostData };
+  }
+}
+
+watch(route, () => {
+  handlePostInitData();
+});
+
+onMounted(() => {
+  handlePostInitData();
+});
 </script>
