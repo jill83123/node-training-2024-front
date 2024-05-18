@@ -4,26 +4,46 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { showToast } from '@/utils/sweetAlert';
 
+const { VITE_API_URL, BASE_URL } = import.meta.env;
+
 const postStore = defineStore('post', () => {
   const router = useRouter();
 
-  const posts = ref([]);
   const editingPostData = ref({});
-
   function goToEditPost(post) {
     editingPostData.value = { ...post };
     // eslint-disable-next-line no-underscore-dangle
     router.push(`/post/edit/${post._id}`);
   }
 
-  const API_URL = import.meta.env.VITE_API_URL;
-
-  async function getPosts({ sort = 'desc', keywords = '' }) {
+  const posts = ref([]);
+  const sort = ref('desc');
+  const keyword = ref('');
+  async function getPosts(options) {
     try {
-      const res = await axios.get(`${API_URL}/posts?sort=${sort}&q=${keywords}`);
+      if (options === 'all') {
+        keyword.value = '';
+      }
+
+      const res = await axios.get(`${VITE_API_URL}/posts?sort=${sort.value}&q=${keyword.value}`);
       posts.value = res.data.posts;
+
+      posts.value.forEach((post, index) => {
+        if (!post.user.photo) {
+          posts.value[index].user.photo = `${BASE_URL}images/user_default.png`;
+        }
+        post.comments.forEach((comment, commentIndex) => {
+          if (!comment.user.photo) {
+            posts.value[index].comments[commentIndex].user.photo = `${BASE_URL}images/user_default.png`;
+          }
+        });
+      });
     } catch (err) {
-      showToast({ icon: 'error', title: err.response?.data?.message || err.message });
+      if (err.response?.data?.message === '找不到相關貼文') {
+        posts.value = [];
+      } else {
+        showToast({ icon: 'error', title: err.response?.data?.message || err.message });
+      }
     }
   }
 
@@ -31,7 +51,7 @@ const postStore = defineStore('post', () => {
     form, postId, postData, isNewPost,
   }) {
     let http = 'post';
-    let url = `${API_URL}/post`;
+    let url = `${VITE_API_URL}/post`;
     let message = '新增成功';
     let pushRoute = '/';
 
@@ -54,8 +74,8 @@ const postStore = defineStore('post', () => {
 
   async function deletePost(postId) {
     try {
-      await axios.delete(`${API_URL}/post/${postId}`);
-      await getPosts({});
+      await axios.delete(`${VITE_API_URL}/post/${postId}`);
+      await getPosts();
     } catch (err) {
       showToast({ icon: 'error', title: err.response?.data?.message || err.message });
     }
@@ -63,6 +83,8 @@ const postStore = defineStore('post', () => {
 
   return {
     posts,
+    sort,
+    keyword,
     getPosts,
     submitPost,
     deletePost,

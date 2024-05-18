@@ -3,26 +3,27 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { showToast } from '@/utils/sweetAlert';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const { VITE_API_URL, BASE_URL } = import.meta.env;
 
 const userStore = defineStore('user', () => {
   const user = ref({});
 
   async function getUserProfile() {
     try {
-      const res = await axios.get(`${API_URL}/user/profile`);
+      const res = await axios.get(`${VITE_API_URL}/user/profile`);
       user.value = res.data.user;
+      if (!user.value.photo) {
+        user.value.photo = `${BASE_URL}images/user_default.png`;
+      }
     } catch (err) {
       showToast({ icon: 'error', title: err.response?.data?.message || err.message });
     }
   }
 
-  const likingId = ref('');
   async function handleLikePost(isLiked, postId) {
-    likingId.value = postId;
     try {
       let http = '';
-      let url = `${API_URL}/post/${postId}`;
+      let url = `${VITE_API_URL}/post/${postId}`;
 
       if (isLiked) {
         http = 'delete';
@@ -36,12 +37,10 @@ const userStore = defineStore('user', () => {
     } catch (err) {
       showToast({ icon: 'error', title: err.response?.data?.message || err.message });
     }
-    likingId.value = '';
   }
 
   return {
     user,
-    likingId,
     getUserProfile,
     handleLikePost,
   };
