@@ -107,11 +107,7 @@
           @keyup.enter="uploadImage"
           tabindex="0"
           class="flex w-full max-w-32 cursor-pointer items-center justify-center rounded bg-primary py-1 text-center text-white hover:bg-goldenrod hover:text-primary">
-          <SpinnerComponent
-            v-if="isUploading"
-            :width="'16px'"
-            :height="'16px'"
-            :color="'white'" />
+          <SpinnerComponent v-if="isUploading" :width="'16px'" :height="'16px'" :color="'white'" />
           <span class="ml-2">上傳圖片</span>
           <input type="file" ref="imageFileInput" @change="uploadImage" class="hidden" />
         </label>
@@ -145,13 +141,17 @@
         </button>
       </div>
       <ErrorMessage name="圖片網址" class="mt-1 block text-sm text-danger" />
-      <p v-if="!errors.errors['圖片網址'] && !isValidImage" class="mt-1 block text-sm text-danger">
+
+      <p v-if="!errors.errors['圖片網址'] && isCheckingImage" class="mt-1 text-sm">檢查中...</p>
+      <p
+        v-if="!errors.errors['圖片網址'] && !isValidImage && !isCheckingImage"
+        class="mt-1 text-sm text-danger">
         無效的網址，請確認網址是否正確
       </p>
 
       <div v-show="postData.image && !errors.errors['圖片網址']" class="relative">
         <img
-          v-show="isValidImage"
+          v-show="isValidImage && !isCheckingImage"
           :src="postData.image"
           alt="貼文圖片"
           class="mx-auto mt-2 h-auto rounded-lg border-2 border-primary object-contain" />
@@ -171,7 +171,14 @@
       type="submit"
       class="mx-auto block w-full rounded-lg border-2 border-primary bg-goldenrod py-4 disabled:bg-[#A8B0B9] disabled:text-primary sm:w-auto sm:px-[130px]"
       style="box-shadow: -2px 2px 0px #000400"
-      :disabled="Object.keys(errors.errors).length !== 0 || !isInputsValidated">
+      :disabled="
+        Object.keys(errors.errors).length !== 0
+          || postData.content === ''
+          || postData.type === ''
+          || postData.tags.find((tag) => tag === '')
+          || !isValidImage
+          || isCheckingImage
+      ">
       送出貼文
     </button>
   </VForm>
@@ -231,12 +238,20 @@ function deleteImage() {
 }
 
 const isValidImage = ref(true);
+const isCheckingImage = ref(false);
 const debouncedCheckImage = debounce(async (url) => {
   isValidImage.value = await checkUrlValid(url);
+  isCheckingImage.value = false;
 }, 500);
 watch(
   () => postData.value.image,
   async (newUrl) => {
+    if (newUrl.trim() === '') {
+      isValidImage.value = true;
+      isCheckingImage.value = false;
+      return;
+    }
+    isCheckingImage.value = true;
     await debouncedCheckImage(newUrl);
   },
 );
@@ -272,28 +287,7 @@ async function addTag() {
   document.querySelector(`#tag${lastIndex}`).focus();
 }
 
-const isInputsValidated = ref(false);
-const debouncedCheckInputs = debounce(async () => {
-  if (
-    postData.value.content !== ''
-    && postData.value.type !== ''
-    && (!postData.value.tags.length || postData.value.tags.find((tag) => tag !== ''))
-    && isValidImage.value
-  ) {
-    isInputsValidated.value = true;
-  }
-}, 1000);
-watch(
-  postData,
-  () => {
-    isInputsValidated.value = false;
-    debouncedCheckInputs();
-  },
-  { deep: true },
-);
-
 let isNewPost = null;
-
 const form = ref(null);
 async function submitPost() {
   const { postId } = route.params;
@@ -319,11 +313,9 @@ function handlePostInitData() {
     postData.value = { ...postStore.editingPostData };
   }
 }
-
 watch(route, () => {
   handlePostInitData();
 });
-
 onMounted(() => {
   handlePostInitData();
 });
