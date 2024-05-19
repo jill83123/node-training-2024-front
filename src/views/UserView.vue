@@ -3,8 +3,7 @@
   <NavComponent />
 
   <div
-    class="min-h-[calc(100vh_-_66px)] bg-[length:36px_36px] sm:bg-[length:64px_64px]"
-    :style="{ 'background-image': `url(${BASE_URL}images/bg.svg)` }">
+    class="bg relative min-h-[calc(100vh_-_66px)] after:bg-[length:36px_36px] after:sm:bg-[length:64px_64px]">
     <div class="container flex justify-between gap-7 py-12">
       <main class="w-full lg:w-[62%]">
         <RouterView v-if="isChecked" />
@@ -25,8 +24,6 @@ import SecNavComponent from '@/components/SecNavComponent.vue';
 
 const router = useRouter();
 const userStore = createUserStore();
-
-const BASE_URL = ref(import.meta.env.BASE_URL);
 
 const isLoading = ref(false);
 const isChecked = ref(false);
@@ -53,3 +50,16 @@ onMounted(async () => {
   isLoading.value = false;
 });
 </script>
+
+<style>
+.bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url('/images/bg.svg');
+  z-index: -100;
+}
+</style>
