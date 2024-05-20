@@ -1,14 +1,7 @@
 <template>
   <VueLoading v-model:active="isLoading" />
 
-  <div class="relative mb-3 h-[64px]">
-    <h2
-      class="absolute bottom-0 left-0 right-0 top-0 z-10 border-2 border-primary bg-white py-[18px] text-center text-xl font-bold">
-      {{ route.fullPath === '/post/create' ? '張貼動態' : '編輯貼文' }}
-    </h2>
-    <div
-      class="absolute bottom-[-4px] left-[-4px] right-1 top-1 z-0 border-2 border-primary bg-white py-[18px] text-center text-xl font-bold" />
-  </div>
+  <PageTitle :title="route.fullPath === '/post/create' ? '張貼動態' : '編輯貼文'" />
 
   <VForm
     ref="form"
@@ -192,6 +185,7 @@ import {
 } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import createPostStore from '@/stores/postStore';
+import PageTitle from '@/components/PageTitle.vue';
 import SpinnerComponent from '@/components/SpinnerComponent.vue';
 import { showCheck } from '@/utils/sweetAlert';
 import { checkUrlValid } from '@/utils/formValidate';
