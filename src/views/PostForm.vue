@@ -99,9 +99,10 @@
         <label
           @keyup.enter="uploadImage"
           tabindex="0"
-          class="flex w-full max-w-32 cursor-pointer items-center justify-center rounded bg-primary py-1 text-center text-white hover:bg-goldenrod hover:text-primary">
+          class="flex w-full max-w-32 cursor-pointer items-center justify-center rounded bg-primary py-1 text-center text-white hover:bg-goldenrod hover:text-primary"
+          :class="{ 'pointer-events-none bg-gray-500 hover:bg-auto': isUploading }">
           <SpinnerComponent v-if="isUploading" :width="'16px'" :height="'16px'" :color="'white'" />
-          <span class="ml-2">上傳圖片</span>
+          <span :class="{ 'ml-2': isUploading }">上傳圖片</span>
           <input type="file" ref="imageFileInput" @change="uploadImage" class="hidden" />
         </label>
 
@@ -171,6 +172,7 @@
           || postData.tags.find((tag) => tag === '')
           || !isValidImage
           || isCheckingImage
+          || !isChange
       ">
       送出貼文
     </button>
@@ -282,6 +284,39 @@ async function addTag() {
 }
 
 let isNewPost = null;
+
+const isChange = ref(false);
+watch(
+  () => postData.value,
+  () => {
+    if (isNewPost) {
+      isChange.value = true;
+      return;
+    }
+
+    // tags 為陣列，額外檢查
+    const checkField = ['content', 'type', 'image'];
+
+    let sameNum = 0;
+    const totalNum = 4;
+
+    checkField.forEach((data) => {
+      if (postData.value[data] === postStore.editingPostData[data]) {
+        sameNum += 1;
+      }
+    });
+    const isChangeTags = postData.value.tags.some(
+      (tag, index) => tag !== postStore.editingPostData.tags[index],
+    );
+    if (!isChangeTags && postData.value.tags.length === postStore.editingPostData.tags.length) {
+      sameNum += 1;
+    }
+
+    isChange.value = sameNum !== totalNum;
+  },
+  { deep: true },
+);
+
 const form = ref(null);
 async function submitPost() {
   const { postId } = route.params;
@@ -304,7 +339,7 @@ function handlePostInitData() {
     router.push('/');
   } else if (route.fullPath.match('/post/edit/')) {
     isNewPost = false;
-    postData.value = { ...postStore.editingPostData };
+    postData.value = JSON.parse(JSON.stringify(postStore.editingPostData));
   }
 }
 watch(route, () => {
