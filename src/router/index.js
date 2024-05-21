@@ -25,6 +25,15 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: 'user',
+          children: [
+            {
+              path: 'edit',
+              component: () => import('../views/EditUserData.vue'),
+            },
+          ],
+        },
       ],
     },
     {
