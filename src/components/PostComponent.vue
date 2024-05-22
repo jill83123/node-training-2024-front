@@ -10,17 +10,19 @@
       <div class="mb-3">
         <div class="relative bottom-0 mb-4 flex">
           <div class="flex w-full gap-4">
-            <img
-              :src="post.user.photo"
-              alt="大頭貼"
-              class="h-[45px] w-[45px] rounded-full border-2 border-primary" />
+            <RouterLink :to="`/user/${post.user._id}/posts`">
+              <img
+                :src="post.user.photo"
+                alt="大頭貼"
+                class="h-[45px] w-[45px] rounded-full border-2 border-primary" />
+            </RouterLink>
 
             <div>
-              <button
-                type="button"
-                class="self-start font-bold hover:text-secondary hover:underline hover:decoration-secondary hover:underline-offset-2">
+              <RouterLink
+                :to="`/user/${post.user._id}/posts`"
+                class="block self-start font-bold hover:text-secondary hover:underline hover:decoration-secondary hover:underline-offset-2">
                 {{ post.user?.name }}
-              </button>
+              </RouterLink>
 
               <div class="flex items-center">
                 <div class="text-[12px] text-[#9B9893]">
@@ -149,8 +151,8 @@
         <span
           v-for="color in ['#DE4B63', '#FAA722', '#83C51D']"
           :key="color"
-          class="h-[10px] w-[10px] select-none rounded-full border border-[#707070]"
-          :class="`bg-[${color}]`" />
+          class="select-none rounded-full border"
+          :style="`background-color: ${color}; border-color: #707070; height: 10px; width: 10px;`" />
       </div>
 
       <div class="py-8">
@@ -161,13 +163,14 @@
         <template v-else>
           <p class="mb-1 text-center text-[#9B9893]">查無相關貼文</p>
 
-          <button
-            type="button"
-            @click="postStore.getPosts('all')"
-            class="mx-auto flex items-center gap-1 text-secondary hover:opacity-80">
-            <span class="material-symbols-outlined">undo</span>
-            <span class="mr-2">返回</span>
-          </button>
+          <div class="flex">
+            <RouterLink
+              :to="`${route.path}`"
+              class="mx-auto flex items-center gap-1 text-secondary hover:opacity-80">
+              <span class="material-symbols-outlined">undo</span>
+              <span class="mr-2">返回</span>
+            </RouterLink>
+          </div>
         </template>
       </div>
     </div>
@@ -178,12 +181,15 @@
 import {
   ref, nextTick, onMounted, onBeforeUnmount,
 } from 'vue';
+import { useRoute } from 'vue-router';
 import createUserStore from '@/stores/userStore';
 import createPostStore from '@/stores/postStore';
 import PostComment from '@/components/PostComment.vue';
 import SpinnerComponent from '@/components/SpinnerComponent.vue';
 import { formatDate } from '@/utils/format';
 import { showCheck } from '@/utils/sweetAlert';
+
+const route = useRoute();
 
 const userStore = createUserStore();
 const postStore = createPostStore();

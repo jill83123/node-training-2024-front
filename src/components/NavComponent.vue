@@ -21,12 +21,12 @@
           class="absolute left-0 right-0 top-full z-10 mt-2 text-center transition-all after:absolute after:-bottom-2 after:-right-2 after:left-2 after:top-2 after:-z-10 after:border-2 after:border-primary after:bg-white"
           :class="{ 'pointer-events-none opacity-0 ': !isOpenedUserMenu }">
           <li>
-            <button
-              type="button"
+            <RouterLink
+              :to="`/user/${userStore.user.id}/posts`"
               @click="toggleUserMenu"
-              class="w-full border-x-2 border-t-2 border-primary bg-white py-2 hover:bg-gray-100">
+              class="block w-full border-x-2 border-t-2 border-primary bg-white py-2 hover:bg-gray-100">
               我的貼文牆
-            </button>
+            </RouterLink>
           </li>
           <li>
             <RouterLink

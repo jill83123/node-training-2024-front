@@ -9,13 +9,15 @@
         張貼動態
       </RouterLink>
 
-      <button type="button" class="mb-4 flex w-full items-center gap-4 hover:text-secondary">
+      <RouterLink
+        :to="`/user/${userStore.user.id}/posts`"
+        class="mb-4 flex w-full items-center gap-4 hover:text-secondary">
         <img
-          src="/images/user_default.png"
+          :src="userStore.user.photo"
           alt="user-photo"
           class="h-[50px] w-[50px] rounded-full border-2 border-primary object-contain" />
-        <p class="font-bold">邊緣小杰</p>
-      </button>
+        <p class="font-bold">{{ userStore.user.name }}</p>
+      </RouterLink>
 
       <button
         type="button"
@@ -62,6 +64,12 @@
     </div>
   </nav>
 </template>
+
+<script setup>
+import createUserStore from '@/stores/userStore';
+
+const userStore = createUserStore();
+</script>
 
 <style lang="postcss">
 .aside-item:hover {

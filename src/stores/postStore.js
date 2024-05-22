@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { showToast } from '@/utils/sweetAlert';
 
-const { VITE_API_URL, BASE_URL } = import.meta.env;
+const { VITE_API_URL } = import.meta.env;
 
 const postStore = defineStore('post', () => {
   const router = useRouter();
@@ -16,28 +16,27 @@ const postStore = defineStore('post', () => {
     router.push(`/post/edit/${post._id}`);
   }
 
+  const user = ref({});
   const posts = ref([]);
+
   const sort = ref('desc');
   const keyword = ref('');
-  async function getPosts(options) {
+
+  const postsOption = ref('');
+  const postsUserId = ref('');
+
+  async function getPosts() {
     try {
-      if (options === 'all') {
-        keyword.value = '';
+      let url = `${VITE_API_URL}/posts`;
+
+      if (postsOption.value === 'user') {
+        url += `/user/${postsUserId.value}`;
       }
 
-      const res = await axios.get(`${VITE_API_URL}/posts?sort=${sort.value}&q=${keyword.value}`);
+      url += `?sort=${sort.value}&q=${keyword.value}`;
+      const res = await axios.get(url);
       posts.value = res.data.posts;
-
-      posts.value.forEach((post, index) => {
-        if (!post.user.photo) {
-          posts.value[index].user.photo = `${BASE_URL}images/user_default.png`;
-        }
-        post.comments.forEach((comment, commentIndex) => {
-          if (!comment.user.photo) {
-            posts.value[index].comments[commentIndex].user.photo = `${BASE_URL}images/user_default.png`;
-          }
-        });
-      });
+      user.value = res.data.user;
     } catch (err) {
       if (err.response?.data?.message === '找不到相關貼文') {
         posts.value = [];
@@ -82,9 +81,12 @@ const postStore = defineStore('post', () => {
   }
 
   return {
+    user,
     posts,
     sort,
     keyword,
+    postsOption,
+    postsUserId,
     getPosts,
     submitPost,
     deletePost,

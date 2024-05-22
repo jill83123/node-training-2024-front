@@ -27,11 +27,11 @@
             "
             @click="
               toggleSortMenu('desc');
-              postStore.getPosts();
+              searchPost();
             "
             @keyup.enter="
               toggleSortMenu('desc');
-              postStore.getPosts();
+              searchPost();
             ">
             最新貼文
           </li>
@@ -45,11 +45,11 @@
             "
             @click="
               toggleSortMenu('asc');
-              postStore.getPosts();
+              searchPost();
             "
             @keyup.enter="
               toggleSortMenu('asc');
-              postStore.getPosts();
+              searchPost();
             ">
             由舊至新
           </li>
@@ -65,12 +65,12 @@
         placeholder="搜尋貼文"
         class="focus-visible: block h-full w-full px-4 py-3 outline-none"
         v-model.trim="postStore.keyword"
-        @keyup.enter="postStore.getPosts" />
+        @keyup.enter="searchPost" />
 
       <button
         type="button"
         class="flex aspect-square items-center justify-center border-l-2 border-primary bg-secondary p-[13px] text-xl text-white"
-        @click="postStore.getPosts">
+        @click="searchPost">
         <span class="material-symbols-outlined h-5 w-5">search</span>
       </button>
     </div>
@@ -79,14 +79,20 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
 import createPostStore from '@/stores/postStore';
 
+const router = useRouter();
 const postStore = createPostStore();
 
 const isOpenedSortMenu = ref(false);
 function toggleSortMenu(option) {
   postStore.sort = option || postStore.sort;
   isOpenedSortMenu.value = !isOpenedSortMenu.value;
+}
+
+async function searchPost() {
+  router.push(`?q=${postStore.keyword}&sort=${postStore.sort}`);
 }
 
 const handleBodyClick = (e) => {
