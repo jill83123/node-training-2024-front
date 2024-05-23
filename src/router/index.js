@@ -39,6 +39,14 @@ const router = createRouter({
               path: ':userId/posts',
               component: () => import('../views/PostWall.vue'),
             },
+            {
+              path: 'following',
+              component: () => import('../views/FollowingList.vue'),
+            },
+            {
+              path: 'likes',
+              component: () => import('../views/LikeList.vue'),
+            },
           ],
         },
       ],
@@ -60,4 +68,12 @@ const router = createRouter({
   ],
 });
 
+// eslint-disable-next-line import/no-mutable-exports
+let previousRoute = {};
+router.beforeEach((to, from, next) => {
+  previousRoute = from;
+  next();
+});
+
 export default router;
+export { previousRoute };

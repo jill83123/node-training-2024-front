@@ -1,7 +1,7 @@
 <template>
   <!-- PC -->
   <aside class="hidden w-[36%] lg:block">
-    <nav class="border-2 border-primary bg-white px-6 py-8">
+    <nav class="top-24 border-2 border-primary bg-white px-6 py-8 lg:sticky">
       <RouterLink
         to="/post/create"
         class="w-100 mb-6 flex items-center justify-center rounded-lg border-2 border-primary bg-secondary py-4 font-bold text-white hover:bg-goldenrod hover:text-primary"
@@ -19,23 +19,25 @@
         <p class="font-bold">{{ userStore.user.name }}</p>
       </RouterLink>
 
-      <button
-        type="button"
+      <RouterLink
+        to="/user/following"
         class="aside-item mb-4 flex w-full items-center gap-4 hover:text-secondary">
         <div
           class="flex h-[50px] w-[50px] items-center justify-center rounded-full border-2 border-primary bg-[#E2EDFA]">
           <span class="material-symbols-outlined">notifications</span>
         </div>
         <p class="font-bold">追蹤名單</p>
-      </button>
+      </RouterLink>
 
-      <button type="button" class="aside-item flex w-full items-center gap-4 hover:text-secondary">
+      <RouterLink
+        to="/user/likes"
+        class="aside-item flex w-full items-center gap-4 hover:text-secondary">
         <div
           class="flex h-[50px] w-[50px] items-center justify-center rounded-full border-2 border-primary bg-[#E2EDFA]">
           <span class="material-symbols-outlined">thumb_up</span>
         </div>
         <p class="font-bold">我按讚的文章</p>
-      </button>
+      </RouterLink>
     </nav>
   </aside>
 
@@ -48,14 +50,19 @@
         class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-white">
         <span class="material-symbols-outlined font-medium text-primary">home</span>
       </RouterLink>
-      <div
+
+      <RouterLink
+        to="/user/following"
         class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-white">
         <span class="material-symbols-outlined font-medium text-primary">notifications</span>
-      </div>
-      <div
+      </RouterLink>
+
+      <RouterLink
+        to="/user/likes"
         class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-white">
         <span class="material-symbols-outlined font-medium text-primary">thumb_up</span>
-      </div>
+      </RouterLink>
+
       <RouterLink
         to="/post/create"
         class="flex h-[48px] w-[48px] items-center justify-center rounded-full border-[3px] border-primary bg-secondary">
