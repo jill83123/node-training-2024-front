@@ -196,12 +196,6 @@ const postStore = createPostStore();
 
 const isLoading = ref(false);
 
-onMounted(async () => {
-  isLoading.value = true;
-  await postStore.getPosts();
-  isLoading.value = false;
-});
-
 const likingId = ref('');
 async function handleLikePost(isLiked, postId) {
   likingId.value = postId;

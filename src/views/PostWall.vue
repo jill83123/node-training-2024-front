@@ -25,8 +25,20 @@
     </div>
   </template>
 
-  <PostSearchBar />
+  <PostSearchBar v-if="!route.params.postId" />
   <PostComponent v-if="!isLoading" />
+
+  <template v-if="route.params.postId">
+    <div class="mb-4 flex justify-end">
+      <RouterLink
+        to="/"
+        class="flex items-center gap-1 rounded-lg border-2 border-primary bg-secondary px-3 py-2 text-white hover:bg-goldenrod hover:text-primary"
+        style="box-shadow: 0px 2px 0px #000400">
+        <span class="material-symbols-outlined">undo</span>
+        返回全部貼文
+      </RouterLink>
+    </div>
+  </template>
 </template>
 
 <script setup>
@@ -52,20 +64,18 @@ async function handleGetPost() {
     postStore.postsOption = '';
   }
 
-  if (route.query.q) {
-    postStore.keyword = route.query.q;
-  } else {
-    postStore.keyword = '';
-  }
-
-  if (route.query.sort) {
-    postStore.sort = route.query.sort;
-  } else {
-    postStore.sort = 'desc';
-  }
+  postStore.keyword = route.query.q ? route.query.q : '';
+  postStore.sort = route.query.sort ? route.query.sort : 'desc';
 
   isLoading.value = true;
-  await postStore.getPosts();
+
+  const { postId } = route.params;
+  if (postId) {
+    await postStore.getPost(postId);
+  } else {
+    await postStore.getPosts();
+  }
+
   isLoading.value = false;
 }
 onMounted(async () => {

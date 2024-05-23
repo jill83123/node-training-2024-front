@@ -13,8 +13,11 @@ const router = createRouter({
         },
         {
           path: 'post',
-          component: () => import('../views/PostForm.vue'),
           children: [
+            {
+              path: ':postId',
+              component: () => import('../views/PostWall.vue'),
+            },
             {
               path: 'create',
               component: () => import('../views/PostForm.vue'),

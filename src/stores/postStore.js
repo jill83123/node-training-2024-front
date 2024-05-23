@@ -46,6 +46,16 @@ const postStore = defineStore('post', () => {
     }
   }
 
+  async function getPost(postId) {
+    try {
+      const res = await axios.get(`${VITE_API_URL}/post/${postId}`);
+      posts.value = [res.data.post];
+    } catch (err) {
+      showToast({ icon: 'error', title: err.response?.data?.message || err.message });
+      router.push('/');
+    }
+  }
+
   async function submitPost({
     form, postId, postData, isNewPost,
   }) {
@@ -88,6 +98,7 @@ const postStore = defineStore('post', () => {
     postsOption,
     postsUserId,
     getPosts,
+    getPost,
     submitPost,
     deletePost,
     goToEditPost,
