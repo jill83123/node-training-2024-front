@@ -175,6 +175,18 @@
       </div>
     </div>
   </template>
+
+  <template v-if="route.params.postId">
+    <div class="mb-4 flex justify-end">
+      <RouterLink
+        :to="previousRoute.fullPath?.match('/post/edit') ? '/' : previousRoute.fullPath"
+        class="flex items-center gap-1 rounded-lg border-2 border-primary bg-secondary px-3 py-2 text-sm text-white hover:bg-goldenrod hover:text-primary"
+        style="box-shadow: 0px 2px 0px #000400">
+        <span class="material-symbols-outlined text-xl leading-none">undo</span>
+        返回
+      </RouterLink>
+    </div>
+  </template>
 </template>
 
 <script setup>
@@ -182,6 +194,7 @@ import {
   ref, nextTick, onMounted, onBeforeUnmount,
 } from 'vue';
 import { useRoute } from 'vue-router';
+import { previousRoute } from '@/router';
 import createUserStore from '@/stores/userStore';
 import createPostStore from '@/stores/postStore';
 import PostComment from '@/components/PostComment.vue';
