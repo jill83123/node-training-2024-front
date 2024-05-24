@@ -190,13 +190,11 @@
 <script setup>
 import axios from 'axios';
 import { ref, watch, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import createUserStore from '@/stores/userStore';
 import PageTitle from '@/components/PageTitle.vue';
 import SpinnerComponent from '@/components/SpinnerComponent.vue';
 import { showToast } from '@/utils/sweetAlert';
 
-const router = useRouter();
 const userStore = createUserStore();
 
 const currentEdit = ref('name');
@@ -260,9 +258,11 @@ async function updateUserData() {
 async function updatePassword() {
   isLoading.value = true;
   try {
-    await axios.post(`${VITE_API_URL}/user/updatePassword`, userPassword.value);
-    showToast({ icon: 'success', title: '重設成功，請重新登入' });
-    router.push('/sign/in');
+    const res = await axios.post(`${VITE_API_URL}/user/updatePassword`, userPassword.value);
+    const { token, expires } = res.data;
+    axios.defaults.headers.common.authorization = `Bearer ${token}`;
+    document.cookie = `MetaWallToken=${token}; expires=${new Date(expires)}`;
+    showToast({ icon: 'success', title: '重設成功' });
   } catch (err) {
     showToast({ icon: 'error', title: err.response?.data?.message || err.message });
   }
