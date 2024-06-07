@@ -7,7 +7,10 @@
         <RouterLink to="/">MetaWall</RouterLink>
       </h1>
       <div id="userMenu" class="relative">
-        <button type="button" class="flex min-w-[182px] items-center" @click="toggleUserMenu">
+        <button
+          type="button"
+          class="flex min-w-[182px] items-center justify-end"
+          @click="toggleUserMenu">
           <img
             :src="userStore.user.photo"
             alt="大頭貼"
