@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import axios from 'axios';
 import { showToast } from '@/utils/sweetAlert';
 
-const { VITE_API_URL, BASE_URL } = import.meta.env;
+const { VITE_API_URL } = import.meta.env;
 
 const userStore = defineStore('user', () => {
   const user = ref({});
@@ -12,9 +12,6 @@ const userStore = defineStore('user', () => {
     try {
       const res = await axios.get(`${VITE_API_URL}/user/profile`);
       user.value = res.data.user;
-      if (!user.value.photo) {
-        user.value.photo = `${BASE_URL}images/user_default.png`;
-      }
     } catch (err) {
       showToast({ icon: 'error', title: err.response?.data?.message || err.message });
     }
