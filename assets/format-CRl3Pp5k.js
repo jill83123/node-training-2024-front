@@ -1,0 +1,1 @@
+function $(o){const t=new Date(o),s=t.getFullYear(),e=t.getMonth()+1,n=t.getDate(),a=`0${t.getHours()}`.slice(-2),c=`0${t.getMinutes()}`.slice(-2);return`${s}/${e<10?`0${e}`:e}/${n<10?`0${n}`:n} ${a}:${c}`}export{$ as f};
