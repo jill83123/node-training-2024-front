@@ -44,7 +44,7 @@
           <li>
             <button
               type="button"
-              @click="toggleUserMenu"
+              @click="logout"
               class="w-full border-2 border-primary bg-white py-2 hover:bg-gray-100">
               登出
             </button>
@@ -69,9 +69,11 @@
 <script setup>
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import createUserStore from '@/stores/userStore';
 import { showToast } from '@/utils/sweetAlert';
 
+const router = useRouter();
 const userStore = createUserStore();
 
 const isOpenedUserMenu = ref(false);
@@ -99,4 +101,10 @@ async function sendVerificationEmail() {
   }
   isLoading.value = false;
 }
+
+const logout = async () => {
+  document.cookie = 'MetaWallToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+  router.push('/sign/in');
+  showToast({ icon: 'success', title: '登出成功' });
+};
 </script>
